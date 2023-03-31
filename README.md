@@ -1,6 +1,6 @@
 # go-bot-feeds
 
-RSS, Atom and JSON feed parser plugin for go-chat-bot
+RSS, Atom and JSON feed parser plugin for [go-chat-bot](https://github.com/go-chat-bot/bot).
 
 Requires on the `FEEDS`, and `FEEDS_CRON` environment variables to be set.
 
