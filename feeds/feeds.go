@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chat-bot/bot"
 	"github.com/mmcdole/gofeed"
+	"github.com/robfig/cron/v3"
 )
 
 // when called, this function polls the feeds and grabs their contents
