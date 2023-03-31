@@ -9,30 +9,44 @@ import (
 	"github.com/go-chat-bot/bot"
 	"github.com/mmcdole/gofeed"
 )
+
 // when called, this function polls the feeds and grabs their contents
 func feeds(channel string) (msg string, err error) {
-	feeds := strings.Split(os.Getenv("FEEDS"), ",")
-	fp := gofeed.NewParser()
+        feeds := strings.Split(os.Getenv("FEEDS"), ",")
 
-	var sb strings.Builder
+        cronTime :=  os.Getenv("FEEDS_CRON")
+        currTime := time.Now()
 
-	for _, feed := range feeds {
-		pFeed, err := fp.ParseURL(feed)
-		if err == nil {
-			fItem := pFeed.Items[0]
-			fTime := fItem.PublishedParsed
-			// Use pubdate of latest entry and if it came after the last update add it to msg string.
-			yTime := time.Now().Add(-24*time.Hour)
+        // Parse cron time and figure out last time job would have run.
+        sched, err := cron.ParseStandard(cronTime)
+        nextRun := sched.Next(currTime)
+        tDiff := time.Until(nextRun)
+        yTime := currTime.Add(-1 * tDiff)
+        fp := gofeed.NewParser()
 
-			if fTime.After(yTime) {
-				tStr :=	fmt.Sprintf("*%s* @ %s \n %s - %s\n", pFeed.Title, fTime.Format(time.UnixDate), fItem.Title, fItem.Link)
-				sb.WriteString(tStr)
-			}
-		}
-	}
+        var sb strings.Builder
 
-	msg = fmt.Sprintf(sb.String())
-	return
+        // Iterate through feeds and entries until we should have seen them before
+        for _, feed := range feeds {
+                pFeed, err := fp.ParseURL(feed)
+                if err == nil {
+                        for i, _ := range pFeed.Items {
+                                fItem := pFeed.Items[i]
+                                fTime := fItem.PublishedParsed
+                                // Compare published time to last time cron ran
+                                if fTime.After(yTime) {
+                                        tStr := fmt.Sprintf("*%s* @ %s \n %s - %s\n", pFeed.Title, fTime.Format(time.
+UnixDate), fItem.Title, fItem.Link)
+                                        sb.WriteString(tStr)
+                                } else {
+                                        break
+                                }
+                        }
+                }
+        }
+
+        msg = fmt.Sprintf(sb.String())
+        return
 }
 
 
