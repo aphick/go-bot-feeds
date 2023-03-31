@@ -18,7 +18,10 @@ func feeds(channel string) (msg string, err error) {
         currTime := time.Now()
 
         // Parse cron time and figure out last time job would have run.
+	// Currently this does not support DoW!! Has to be *
         sched, err := cron.ParseStandard(cronTime)
+	if err:
+		return err
         nextRun := sched.Next(currTime)
         tDiff := time.Until(nextRun)
         yTime := currTime.Add(-1 * tDiff)
@@ -56,9 +59,10 @@ func init() {
 
 
 	if len(channels) > 0 {
+		cronTime :=  os.Getenv("FEEDS_CRON")
 		// Reads from subscribed feeds and posts updates to channels at 1:01 mon-fri
 		config := bot.PeriodicConfig{
-			CronSpec: "1 1 * * * mon-fri",
+			CronSpec: cronTime,
 			Channels: channels,
 			CmdFunc:  feeds,
 		}
