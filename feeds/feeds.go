@@ -22,7 +22,7 @@ func feeds(channel string) (msg string, err error) {
 	// Currently this does not support DoW!! Has to be *
         sched, err := cron.ParseStandard(cronTime)
 	if err != nil {
-		return err
+		return ("Env Cron not looking good", err)
 	}
         nextRun := sched.Next(currTime)
         tDiff := time.Until(nextRun)
