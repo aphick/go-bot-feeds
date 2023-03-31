@@ -21,8 +21,9 @@ func feeds(channel string) (msg string, err error) {
         // Parse cron time and figure out last time job would have run.
 	// Currently this does not support DoW!! Has to be *
         sched, err := cron.ParseStandard(cronTime)
-	if err:
+	if err {
 		return err
+	}
         nextRun := sched.Next(currTime)
         tDiff := time.Until(nextRun)
         yTime := currTime.Add(-1 * tDiff)
