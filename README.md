@@ -10,8 +10,8 @@ Requires on the `FEEDS`, and `FEEDS_CRON` environment variables to be set.
 FEEDS="https://www.nasa.gov/rss/dyn/breaking_news.rss,https://blog.archive.org/atom"
 ```
 
-`FEEDS_CRON` is the frequency of polling in cron syntax.
+`FEEDS_CRON` is the frequency of polling in cron syntax. *Currently does not support DoW!!*
 
 ```
-FEEDS_CRON="1 1 * * * mon-fri"
+FEEDS_CRON="8 0 * * * *"
 ```
